@@ -1,0 +1,89 @@
+import string
+import itertools
+
+alfabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"
+
+def iterare_lista(t, dim):
+    it = iter(t)
+    while True:
+       iterare = tuple(itertools.islice(it, dim))
+       if not iterare:
+           return
+       yield iterare
+       
+def pregatire_text(t): 
+    t = ''.join([c.upper() for c in t if c in string.ascii_letters])
+    inserareX = ""
+    
+    if len(t) < 2:
+        return t
+
+    for i in range(len(t)-1):
+        inserareX += t[i]
+        
+        if t[i] == t[i+1]:
+            inserareX += 'X'
+    
+    inserareX += t[-1]
+
+    if len(inserareX) & 1:
+        inserareX += 'X'
+
+    return inserareX
+
+def generare_matrice(k):
+    matrice = []
+
+    for char in k.upper():
+        if char not in matrice and char in alfabet:
+            matrice.append(char)
+
+    for char in alfabet:
+        if char not in matrice:
+            matrice.append(char)
+
+    return matrice
+
+def criptare(t, k):
+    matrice = generare_matrice(k)
+    t = pregatire_text(t)
+    textcriptat = ""
+
+
+    for char1, char2 in iterare_lista(t, 2):
+        rand1, col1 = divmod(matrice.index(char1), 5)
+        rand2, col2 = divmod(matrice.index(char2), 5)
+
+        if rand1 == rand2:
+            textcriptat += matrice[rand1*5+(col1+1)%5]
+            textcriptat += matrice[rand2*5+(col2+1)%5]
+        elif col1 == col2:
+            textcriptat += matrice[((rand1+1)%5)*5+col1]
+            textcriptat += matrice[((rand2+1)%5)*5+col2]
+        else:
+            textcriptat += matrice[rand1*5+col2]
+            textcriptat += matrice[rand2*5+col1]
+
+    return textcriptat
+
+try:
+  print("Algoritmul Playfair - Onofrei Ioana Alexandra\n\n" 
+  "Doriti sa faceti o criptare sau o decriptare? ")
+  alegere = input("Alegeti o optiune: ")
+
+  if alegere == 'criptare':
+    text = input("Introduceti textul: ")
+    text = text.replace(" ","")
+    if text.isalpha():
+      key = input("Introduceti cheia: ")
+      key = key.strip()
+      text_criptat = criptare(text, key)
+      print("Textul criptat este : ", text_criptat)
+    else:
+      print("Sunt permise doar litere!")
+  else:
+    print("Va rog selectati o optiune valida!")
+
+except Exception as e:
+  print(e)
+  exit("Introduceti un text valid!")

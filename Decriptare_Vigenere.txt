@@ -1,0 +1,47 @@
+import re
+import string
+
+alfabet = "abcdefghijklmnopqrstuvwxyz"
+
+def decriptare(t, k):
+    t = t.lower()
+    k = k.lower()
+    c = ""
+    index = []
+    for x in k:
+        index.append(alfabet.find(x))
+    i = 0
+    for x in t:
+      if i == len(index):
+          i = 0
+      pos = alfabet.find(x.lower()) - index[i]
+      if pos < 0:
+          pos = pos + 26
+      c += alfabet[pos].lower()
+      i +=1
+    return c
+
+try:
+    print("Algoritmul Vigenere - Onofrei Ioana Alexandra\n\n"
+          "Doriti sa faceti o criptare sau o decriptare?")
+    alegere = input("Alegeti o optiune: ")
+    
+    if alegere == 'decriptare':
+       text = input("Introduceti textul: ")
+       text = text.replace(" ", "") 
+       if text.isalpha():
+           key = input("Introduceti cheia: ")          
+           if not key.isalpha():
+              print("Introduceti o cheie valida!")
+           else:
+              text_criptat = decriptare(text, key)
+              print("Textul decriptat este: ", text_criptat)
+       else:
+           print("Sunt permise doar litere!")
+
+    else:
+        print("Va rog selectati o optiune valida!")
+
+except Exception as e:
+    print(e)
+    exit("Introduceti un text valid!")

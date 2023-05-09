@@ -1,0 +1,81 @@
+import string
+import itertools
+
+alfabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"
+
+def iterare_lista(t, dim):
+    it = iter(t)
+    while True:
+       iterare = tuple(itertools.islice(it, dim))
+       if not iterare:
+           return
+       yield iterare
+
+def generare_matrice(k):
+    matrice = []
+    for char in k.upper():
+        if char not in matrice and char in alfabet:
+            matrice.append(char)
+
+    for char in alfabet:
+        if char not in matrice:
+            matrice.append(char)
+
+    return matrice
+
+def decriptare(textcriptat, k):
+    matrice = generare_matrice(k)
+    inserareX = ""
+    
+    if len(textcriptat) < 2:
+        return textcriptat
+
+    for i in range(len(textcriptat)-1):
+        inserareX += textcriptat[i]
+        
+    inserareX += textcriptat[-1]
+
+    if len(inserareX) & 1:
+        inserareX += 'X'
+    textcriptat = inserareX
+    t = ""
+
+    for char1, char2 in iterare_lista(textcriptat, 2):
+        rand1, col1 = divmod(matrice.index(char1), 5)
+        rand2, col2 = divmod(matrice.index(char2), 5)
+
+        if rand1 == rand2:
+            t += matrice[rand1*5+(col1-1)%5]
+            t += matrice[rand2*5+(col2-1)%5]
+        elif col1 == col2:
+            t += matrice[((rand1-1)%5)*5+col1]
+            t += matrice[((rand2-1)%5)*5+col2]
+        else: # rectangle
+            t += matrice[rand1*5+col2]
+            t += matrice[rand2*5+col1]
+
+    return t
+
+try:
+  print("Algortimul Playfair - Onofrei Ioana Alexandra\n\n"
+   "Doriti sa faceto o criptare sau o decriptare?")
+  alegere = input("Alegeti o optiune: ")
+
+  if alegere == 'decriptare':
+    text = input("Introduceti textul: ")
+    text = text.replace(" ","")
+    text = text.upper()
+    if text.isalpha():
+      key = input("Introduceti cheia: ")
+      key = key.strip()
+      text_decriptat = decriptare(text, key)
+      print("Textul decriptat este :", text_decriptat)
+    
+    else:
+      print("Sunt permise doar litere!")
+  else:
+    print("Va rog selectati o optiune valida!")
+
+except Exception as e:
+  print(e)
+  exit("Introduceti un text valid!")
